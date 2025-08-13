@@ -1,6 +1,8 @@
 # main.py
 
-import sys
+import os
+import shutil
+from pathlib import Path
 from downloader import Downloader
 from muxer import Muxer
 
@@ -20,7 +22,18 @@ def main():
         print("Muxing video and audio...")
         muxer.mux(video_file, audio_file, output_file)
 
-        print(f"Video and audio have been muxed successfully into {output_file}")
+        # Delete the temporary video and audio files
+        if os.path.exists(video_file):
+            os.remove(video_file)
+        if os.path.exists(audio_file):
+            os.remove(audio_file)
+
+        # Move the final output to the Downloads folder
+        downloads_folder = str(Path.home() / "Downloads")
+        final_output_path = os.path.join(downloads_folder, output_file)
+        shutil.move(output_file, final_output_path)
+
+        print(f"Video and audio have been muxed successfully into {final_output_path}")
 
     except Exception as e:
         print(f"An error occurred: {e}")
